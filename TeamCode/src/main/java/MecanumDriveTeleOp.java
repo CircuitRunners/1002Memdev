@@ -1,0 +1,21 @@
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+public class MecanumDriveTeleOp extends OpMode {
+
+    private MecanumDrive mecanumDrive;
+
+    @Override
+    public void init() {
+        mecanumDrive = new MecanumDrive(hardwareMap);
+    }
+
+    @Override
+    public void loop() {
+        double forward = gamepad1.left_stick_y;
+        double right = gamepad1.left_stick_x;
+        double rotate = gamepad1.right_stick_x;
+
+        mecanumDrive.drive(forward, right, rotate);
+    }
+}
