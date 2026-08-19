@@ -32,6 +32,11 @@ apply plugin: 'org.team11260.fast-load-plugin'
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
 
+    // Overrides compileSdkVersion 30 from build.common.gradle. Panels and Pedro Pathing
+    // pull in AndroidX artifacts (appcompat 1.6.1, core 1.13.1, activity 1.8.0) whose AAR
+    // metadata requires callers to compile against API 34+.
+    compileSdk 35
+
     packagingOptions {
         jniLibs.useLegacyPackaging true
     }

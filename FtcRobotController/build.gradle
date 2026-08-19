@@ -18,7 +18,9 @@ android {
         buildConfig = true
     }
 
-    compileSdkVersion 30
+    // Bumped from 30: build.dependencies.gradle brings in AndroidX artifacts that require
+    // callers to compile against API 34+.
+    compileSdk 35
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

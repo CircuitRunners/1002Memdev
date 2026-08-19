@@ -19,7 +19,7 @@
  * SOFTWARE.
  */
 
-package OctoQuadTesting;
+package org.firstinspires.ftc.teamcode.OctoQuadTesting;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
