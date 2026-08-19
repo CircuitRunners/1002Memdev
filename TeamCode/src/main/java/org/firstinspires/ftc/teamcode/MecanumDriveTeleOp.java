@@ -1,8 +1,6 @@
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-@TeleOp
 public class MecanumDriveTeleOp extends OpMode {
 
     private MecanumDrive mecanumDrive;
