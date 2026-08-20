@@ -1,34 +1,34 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class TankDrive {
 
-    private DcMotor fr;
-    private DcMotor fl;
-    private DcMotor br;
-    private DcMotor bl;
+    private DcMotorEx fr;
+    private DcMotorEx fl;
+    private DcMotorEx br;
+    private DcMotorEx bl;
 
-    public TankDrive(HardwareMap hardwareMap) {
-        fr = hardwareMap.get(DcMotor.class, "fr");
-        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    private DcMotorEx[] motors;
 
-        fl = hardwareMap.get(DcMotor.class, "fl");
-        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        br = hardwareMap.get(DcMotor.class, "br");
-        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        bl = hardwareMap.get(DcMotor.class, "bl");
-        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    public void init(HardwareMap hardwareMap) {
+        fl = hardwareMap.get(DcMotorEx.class, "fl");
+        fr = hardwareMap.get(DcMotorEx.class, "fr");
+        bl = hardwareMap.get(DcMotorEx.class, "bl");
+        br = hardwareMap.get(DcMotorEx.class, "br");
 
 
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
-        bl.setDirection(DcMotorSimple.Direction.REVERSE);
+        fr.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
+        motors = new DcMotorEx[]{fl, fr, bl, br};
+        for (DcMotorEx motor : motors) {
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
     }
 
     private void setPowers(double leftPower, double rightPower) {

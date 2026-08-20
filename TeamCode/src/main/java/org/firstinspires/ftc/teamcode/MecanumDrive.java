@@ -1,55 +1,61 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 public class MecanumDrive {
-    private DcMotor fr;
-    private DcMotor fl;
-    private DcMotor br;
-    private DcMotor bl;
+    public DcMotorEx frontLeftMotor;
+    public DcMotorEx frontRightMotor;
+    public DcMotorEx backLeftMotor;
+    public DcMotorEx backRightMotor;
 
-    public MecanumDrive(HardwareMap hardwareMap) {
-        fr = hardwareMap.get(DcMotor.class, "fr");
-        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    private DcMotorEx[] motors;
 
-        fl = hardwareMap.get(DcMotor.class, "fl");
-        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    public void init(HardwareMap hardwareMap) {
+        frontLeftMotor = hardwareMap.get(DcMotorEx.class, "fl");
+        frontRightMotor = hardwareMap.get(DcMotorEx.class, "fr");
+        backLeftMotor = hardwareMap.get(DcMotorEx.class, "bl");
+        backRightMotor = hardwareMap.get(DcMotorEx.class, "br");
 
-        br = hardwareMap.get(DcMotor.class, "br");
-        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        bl = hardwareMap.get(DcMotor.class, "bl");
-        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        fl.setDirection(DcMotorSimple.Direction.REVERSE);
-        bl.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        motors = new DcMotorEx[]{frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor};
+        for (DcMotorEx motor : motors) {
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
     }
 
-    private void setPowers(double frPower, double flPower, double brPower, double blPower) {
-        double maxPower = 1.0;
-        maxPower = Math.max(maxPower, frPower);
-        maxPower = Math.max(maxPower, flPower);
-        maxPower = Math.max(maxPower, brPower);
-        maxPower = Math.max(maxPower, blPower);
-        frPower /= maxPower;
-        flPower /= maxPower;
-        brPower /= maxPower;
-        blPower /= maxPower;
-
-        fr.setPower(frPower);
-        fl.setPower(flPower);
-        br.setPower(brPower);
-        bl.setPower(blPower);
+    private void setPowers(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower) {
+        double maxSpeed = 1.0;
+        maxSpeed = Math.max(maxSpeed, Math.abs(frontLeftPower));
+        maxSpeed = Math.max(maxSpeed, Math.abs(frontRightPower));
+        maxSpeed = Math.max(maxSpeed, Math.abs(backLeftPower));
+        maxSpeed = Math.max(maxSpeed, Math.abs(backRightPower));
+        frontLeftPower /= maxSpeed;
+        frontRightPower /= maxSpeed;
+        backLeftPower /= maxSpeed;
+        backRightPower /= maxSpeed;
+        frontLeftMotor.setPower(frontLeftPower);
+        frontRightMotor.setPower(frontRightPower);
+        backLeftMotor.setPower(backLeftPower);
+        backRightMotor.setPower(backRightPower);
     }
-
     public void drive(double forward, double right, double rotate) {
-        double frPower = forward - right - rotate;
-        double flPower = forward + right + rotate;
-        double brPower = forward + right - rotate;
-        double blPower = forward - right + rotate;
+        double frontLeftPower = forward + right + rotate;
+        double frontRightPower = forward - right - rotate;
+        double backLeftPower = forward - right + rotate;
+        double backRightPower = forward + right - rotate;
 
-        setPowers(frPower, flPower, brPower, blPower);
+        setPowers(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
     }
+
+
+
 }
