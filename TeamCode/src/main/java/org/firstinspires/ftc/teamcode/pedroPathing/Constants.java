@@ -44,8 +44,8 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-//            .xVelocity(78.475)
-//            .yVelocity(61.803)
+            .xVelocity(67.205)
+            .yVelocity(58.26777)
             .useBrakeModeInTeleOp(false)
             ;
 
@@ -53,8 +53,8 @@ public class Constants {
     public static OctoQuadConstants octoConstants = new OctoQuadConstants()
 
             .name("octoquad") // change to your Robot Config name
-            .deadwheelPortX(7) // strafe pod port
-            .deadwheelPortY(0) // forward pod port
+            .deadwheelPortX(0) // strafe pod port
+            .deadwheelPortY(7) // forward pod port
 
 
 //            // OctoQuad uses mm for offsets:
@@ -65,8 +65,8 @@ public class Constants {
 
 
 //            // Match your Pinpoint directions:
-            .deadwheelXDir(OctoQuad.EncoderDirection.FORWARD) // strafe
-            .deadwheelYDir(OctoQuad.EncoderDirection.REVERSE) // forward
+            .deadwheelXDir(OctoQuad.EncoderDirection.REVERSE) // forward
+            .deadwheelYDir(OctoQuad.EncoderDirection.REVERSE) // strafe
 
 
 //            // TODO: replace with your tuned/calculated values
