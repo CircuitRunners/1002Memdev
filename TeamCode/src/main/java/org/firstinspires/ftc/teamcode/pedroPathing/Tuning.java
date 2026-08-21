@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.changes;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.drawCurrent;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.drawCurrentAndHistory;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.pushConstants;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.stopRobot;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.telemetryM;
 
@@ -120,6 +121,18 @@ public class Tuning extends SelectableOpMode {
     public static void drawCurrentAndHistory() {
         Drawing.drawPoseHistory(poseHistory);
         drawCurrent();
+    }
+
+    /**
+     * Pushes live edits of Constants.followerConstants into the running Follower.
+     * <p>
+     * PIDF coefficient objects are shared by reference with the PIDFControllers, so editing
+     * their P/I/D/F in Panels already takes effect. Every other constant (mass, centripetal
+     * scaling, the PIDF switch thresholds, zero power accelerations, ...) is copied into
+     * private fields when the Follower is built, so it needs to be re-pushed to go live.
+     */
+    public static void pushConstants() {
+        follower.setConstants(Constants.followerConstants);
     }
 
     /** This creates a full stop of the robot by setting the drive motors to run at 0 power. */
@@ -969,6 +982,7 @@ class TranslationalTuner extends OpMode {
         telemetryM.debug("The robot will try to stay in place while you push it laterally.");
         telemetryM.debug("You can adjust the PIDF values to tune the robot's translational PIDF(s).");
         telemetryM.update(telemetry);
+        pushConstants();
         follower.update();
         drawCurrent();
     }
@@ -987,6 +1001,7 @@ class TranslationalTuner extends OpMode {
     /** This runs the OpMode, updating the Follower as well as printing out the debug statements to the Telemetry */
     @Override
     public void loop() {
+        pushConstants();
         follower.update();
         drawCurrentAndHistory();
 
@@ -1041,6 +1056,7 @@ class HeadingTuner extends OpMode {
         telemetryM.debug("The robot will try to stay at a constant heading while you try to turn it.");
         telemetryM.debug("You can adjust the PIDF values to tune the robot's heading PIDF(s).");
         telemetryM.update(telemetry);
+        pushConstants();
         follower.update();
         drawCurrent();
     }
@@ -1062,6 +1078,7 @@ class HeadingTuner extends OpMode {
      */
     @Override
     public void loop() {
+        pushConstants();
         follower.update();
         drawCurrentAndHistory();
 
@@ -1113,6 +1130,7 @@ class DriveTuner extends OpMode {
         telemetryM.debug("The robot will go forward and backward continuously along the path.");
         telemetryM.debug("Make sure you have enough room.");
         telemetryM.update(telemetry);
+        pushConstants();
         follower.update();
         drawCurrent();
     }
@@ -1143,6 +1161,7 @@ class DriveTuner extends OpMode {
      */
     @Override
     public void loop() {
+        pushConstants();
         follower.update();
         drawCurrentAndHistory();
 
@@ -1262,6 +1281,7 @@ class CentripetalTuner extends OpMode {
         telemetryM.debug("The robot will go continuously along the path.");
         telemetryM.debug("Make sure you have enough room.");
         telemetryM.update(telemetry);
+        pushConstants();
         follower.update();
         drawCurrent();
     }
@@ -1284,6 +1304,7 @@ class CentripetalTuner extends OpMode {
      */
     @Override
     public void loop() {
+        pushConstants();
         follower.update();
         drawCurrentAndHistory();
         if (!follower.isBusy()) {

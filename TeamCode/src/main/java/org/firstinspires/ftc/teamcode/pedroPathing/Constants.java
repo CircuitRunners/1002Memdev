@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.pedroPathing;
 
 
 
+import com.bylazar.configurables.annotations.Configurable;
+import dev.frozenmilk.sinister.loading.Pinned;
+import com.pedropathing.control.FilteredPIDFCoefficients;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PredictiveBrakingCoefficients;
 import com.pedropathing.follower.Follower;
@@ -15,13 +18,18 @@ import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+@Configurable
+@Pinned
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
+            .headingPIDFCoefficients(new PIDFCoefficients(1.5, 0, 0.1, 0.02))
+            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.2, 0.0261154, 0.002699))
+            .centripetalScaling(0)
             .mass(4.54) ;//25 lbs no intake or climb;
 
 
 
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
+    public static PathConstraints pathConstraints = new PathConstraints(0.97, 100, 1, 1);
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
