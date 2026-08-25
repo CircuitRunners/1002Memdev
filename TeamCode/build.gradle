@@ -16,9 +16,6 @@ buildscript {
     repositories {
         mavenCentral()
         maven {
-            url = 'https://www.matthewo.tech/maven/'
-        }
-        maven {
             url = "https://repo.dairy.foundation/releases"
         }
     }
@@ -49,15 +46,13 @@ android {
 
 dependencies {
     implementation project(':FtcRobotController')
+    implementation("com.bylazar.sloth:fullpanels:0.2.4+1.0.12")
     implementation("dev.frozenmilk.sinister:Sloth:0.2.4")
 
 }
 
 repositories {
 
-    maven {
-        url = 'https://www.matthewo.tech/maven/'
-    }
     maven {
         url = "https://repo.dairy.foundation/releases"
     }
