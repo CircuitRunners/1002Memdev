@@ -22,8 +22,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 @Pinned
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .headingPIDFCoefficients(new PIDFCoefficients(1.5, 0, 0.1, 0.02))
-            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.2, 0.0261154, 0.002699))
+            .headingPIDFCoefficients(new PIDFCoefficients(1.5, 0, 0.1, 0.01))
+            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.2,
+                    0.0094287472645351,
+                    0.002957665195206038))
             .centripetalScaling(0)
             .mass(4.54) ;//25 lbs no intake or climb;
 
@@ -52,8 +54,8 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .xVelocity(67.205)
-            .yVelocity(58.26777)
+            .xVelocity(49.74409)
+            .yVelocity(57.08661)
             .useBrakeModeInTeleOp(false)
             ;
 

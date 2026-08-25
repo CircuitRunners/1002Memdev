@@ -66,6 +66,7 @@ public class ExampleAuto extends OpMode {
             case 2:
                 if (!follower.isBusy()) {
                     follower.followPath(line2);
+                    pathState++;
                 }
                 break;
 
