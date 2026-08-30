@@ -68,10 +68,10 @@ public class Constants {
 
 
 //            // OctoQuad uses mm for offsets:
-//            // strafePodX = -3.6485 in -> -92.6719 mm
-//            // forwardPodY = -0.2458 in -> -6.2433 mm
-            .tcpOffsetXMM(79.375f)
-            .tcpOffsetYMM(-31.75f)
+//            // strafePodX = -5.27 in -> -133.86 mm
+//            // forwardPodY = -2.05 in -> -52.07 mm
+            .tcpOffsetXMM(-133.86f)
+            .tcpOffsetYMM(-52.07f)
 
 
 //            // Match your Pinpoint directions:

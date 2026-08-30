@@ -27,14 +27,14 @@ public class ExampleAuto extends OpMode {
     public void loop() {
         follower.update();
         autonomousPathUpdate();
-        telemetry.addData("Current Pose", follower.getPose());
+        telemetry.addData("Current Pose: ", follower.getPose());
     }
 
     private PathChain line1, curve1, line2;
 
     private void buildPaths() {
         line1 = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(72, 72, 90), new Pose(72, 108, 90)))
+                .addPath(new BezierLine(new Pose(72, 72, Math.toRadians(90)), new Pose(72, 108, Math.toRadians(90))))
                 .setConstantHeadingInterpolation(90)
                 .build();
 
