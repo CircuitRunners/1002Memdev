@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing;
+package org.firstinspires.ftc.teamcode.Config.pedroPathing;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
@@ -6,6 +6,7 @@ import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
+import com.pedropathing.paths.HeadingInterpolator;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -40,10 +41,14 @@ public class Routine {
      * Each Routine object has a starting point and
      * a list of Legs.
      */
-
     static class Leg {
         final List<Segment> segments = new ArrayList<>();
         Heading heading = Heading.LINEAR;
+        //allow supplying a custom/piecewise HeadingInterpolator
+        HeadingInterpolator headingInterpolator = null;
+        // allow reversing the per-path heading interpolation (ie reversing tangent heading)
+        boolean reverseHeading = false;
+
         boolean holdEnd = true;
         double pause = 0;
         Runnable onStart;
@@ -78,7 +83,7 @@ public class Routine {
      * @param follower
      * @param mirrored
      */
-    void materialize(Follower follower, boolean mirrored) {
+    void materializePaths(Follower follower, boolean mirrored) {
         Pose cursor = mirrored ? start.mirror() : start;
         for (Leg leg : legs) {
             PathBuilder pb = follower.pathBuilder();
@@ -92,17 +97,28 @@ public class Routine {
                         ? new BezierLine(cursor, end)
                         : new BezierCurve(cursor, ctrl, end));
 
-                switch (leg.heading) {
-                    case LINEAR:
-                        pb.setLinearHeadingInterpolation(cursor.getHeading(), end.getHeading());
-                        break;
-                    case CONSTANT:
-                        pb.setConstantHeadingInterpolation(end.getHeading());
-                        break;
-                    case TANGENT:
-                        pb.setTangentHeadingInterpolation();
-                        break;
+                // prefer an explicit custom/piecewise interpolator if provided
+                if (leg.headingInterpolator != null) {
+                    pb.setHeadingInterpolation(leg.headingInterpolator);
+                } else {
+                    switch (leg.heading) {
+                        case LINEAR:
+                            pb.setLinearHeadingInterpolation(cursor.getHeading(), end.getHeading());
+                            break;
+                        case CONSTANT:
+                            pb.setConstantHeadingInterpolation(end.getHeading());
+                            break;
+                        case TANGENT:
+                            pb.setTangentHeadingInterpolation();
+                            break;
+                    }
                 }
+
+                // if the leg requests reversing the per-path interpolation, apply it here
+                if (leg.reverseHeading) {
+                    pb.setReversed();
+                }
+
                 cursor = end;
             }
 
@@ -160,16 +176,19 @@ public class Routine {
 
         public Builder interpolatedHeading() {
             last().heading = Heading.LINEAR;
+            last().headingInterpolator = null;
             return this;
         }
 
         public Builder constantHeading() {
             last().heading = Heading.CONSTANT;
+            last().headingInterpolator = null;
             return this;
         }
 
         public Builder tangentHeading() {
             last().heading = Heading.TANGENT;
+            last().headingInterpolator = null;
             return this;
         }
 
@@ -200,6 +219,24 @@ public class Routine {
         public Builder waitUntil(BooleanSupplier condition, double timeoutSeconds) {
             last().waitUntil = condition;
             last().waitTimeout = timeoutSeconds;
+            return this;
+        }
+
+        /**
+         * Set a custom or piecewise HeadingInterpolator for the last leg.
+         * Example: customInterpolation(HeadingInterpolator.piecewise(...))
+         */
+        public Builder customInterpolation(HeadingInterpolator interpolator) {
+            last().headingInterpolator = interpolator;
+            return this;
+        }
+
+        /**
+         * Mark the last leg's per-path heading interpolation as reversed.
+         * Useful to reverse tangent heading (drive backwards while heading follows tangent +/- 180°).
+         */
+        public Builder reverseHeading() {
+            last().reverseHeading = true;
             return this;
         }
 

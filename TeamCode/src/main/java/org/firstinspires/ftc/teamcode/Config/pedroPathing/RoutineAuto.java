@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode.pedroPathing;
+package org.firstinspires.ftc.teamcode.Config.pedroPathing;
 
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.HeadingInterpolator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name="Routine Auto")
@@ -8,7 +9,8 @@ public class RoutineAuto extends AutoBase {
     private enum RoutineType {
         QUARTER_CIRCLE,
         TWO_LINES,
-        ZIG_ZAG
+        ZIG_ZAG,
+        PIECEWISE_TEST
     }
 
     private RoutineType routineType = RoutineType.QUARTER_CIRCLE;
@@ -84,6 +86,16 @@ public class RoutineAuto extends AutoBase {
                         .to(Poses.startLine2)
                             .constantHeading()
                             .pause(0.5)
+                        .build();
+
+            case PIECEWISE_TEST:
+                return Routine.from(startPose())
+                        .to(Poses.startLine2)
+                        .customInterpolation(HeadingInterpolator.piecewise(
+                                new HeadingInterpolator.PiecewiseNode(0.0, 0.3, HeadingInterpolator.facingPoint(Poses.startLine1)),
+                                new HeadingInterpolator.PiecewiseNode(0.3, 0.7, HeadingInterpolator.reversedLinear(Poses.startLine1.getHeading(), Math.toRadians(180))),
+                                new HeadingInterpolator.PiecewiseNode(0.7, 1.0, HeadingInterpolator.tangent)
+                        ))
                         .build();
 
             default:

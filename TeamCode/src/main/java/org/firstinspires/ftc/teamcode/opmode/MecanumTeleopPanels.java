@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmode;
 
 import com.bylazar.field.FieldManager;
 import com.bylazar.field.PanelsField;
@@ -12,7 +12,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.Config.MecanumDrive;
+import org.firstinspires.ftc.teamcode.Config.pedroPathing.Constants;
 
 
 //@Disabled

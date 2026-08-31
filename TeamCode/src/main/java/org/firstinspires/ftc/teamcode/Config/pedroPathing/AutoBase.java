@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing;
+package org.firstinspires.ftc.teamcode.Config.pedroPathing;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
@@ -58,7 +58,7 @@ public abstract class AutoBase extends OpMode {
         Pose start = mirrored() ? startPose().mirror() : startPose();
         follower.setStartingPose(start);
         routine = routine();
-        routine.materialize(follower, mirrored());
+        routine.materializePaths(follower, mirrored());
     }
 
     @Override
