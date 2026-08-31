@@ -44,9 +44,9 @@ public class Routine {
     static class Leg {
         final List<Segment> segments = new ArrayList<>();
         Heading heading = Heading.LINEAR;
-        //allow supplying a custom/piecewise HeadingInterpolator
+        // allow supplying a custom/piecewise HeadingInterpolator
         HeadingInterpolator headingInterpolator = null;
-        // allow reversing the per-path heading interpolation (ie reversing tangent heading)
+        // allow reversing the per-path heading interpolation (useful to flip tangent heading by 180°)
         boolean reverseHeading = false;
 
         boolean holdEnd = true;
@@ -97,22 +97,30 @@ public class Routine {
                         ? new BezierLine(cursor, end)
                         : new BezierCurve(cursor, ctrl, end));
 
-                // prefer an explicit custom/piecewise interpolator if provided
+                HeadingInterpolator headingInterpolator;
                 if (leg.headingInterpolator != null) {
-                    pb.setHeadingInterpolation(leg.headingInterpolator);
+                    // explicit override from the user (could be piecewise, lazy, etc.)
+                    headingInterpolator = leg.headingInterpolator;
                 } else {
+
                     switch (leg.heading) {
                         case LINEAR:
-                            pb.setLinearHeadingInterpolation(cursor.getHeading(), end.getHeading());
+                            headingInterpolator = HeadingInterpolator.linear(cursor.getHeading(), end.getHeading());
                             break;
                         case CONSTANT:
-                            pb.setConstantHeadingInterpolation(end.getHeading());
+                            headingInterpolator = HeadingInterpolator.constant(end.getHeading());
                             break;
                         case TANGENT:
-                            pb.setTangentHeadingInterpolation();
+                            //headingInterpolator = HeadingInterpolator.tangent;
+                            //this is redundant, but it is here for clarity
+                        default:
+                            headingInterpolator = HeadingInterpolator.tangent;
                             break;
                     }
                 }
+
+                // Apply the interpolator to the most recently added path
+                pb.setHeadingInterpolation(headingInterpolator);
 
                 // if the leg requests reversing the per-path interpolation, apply it here
                 if (leg.reverseHeading) {
@@ -224,7 +232,12 @@ public class Routine {
 
         /**
          * Set a custom or piecewise HeadingInterpolator for the last leg.
-         * Example: customInterpolation(HeadingInterpolator.piecewise(...))
+         * Example: headingInterpolation(HeadingInterpolator.piecewise(...))
+         *
+         * Note: when you supply a custom headingInterpolator here it is applied per-path
+         * as each segment is added. If you want a single interpolator whose t spans an
+         * entire multi-segment leg, use a single path (e.g., curveThrough) instead of multiple segments
+         * (or just set each path to the same interpolator)
          */
         public Builder customInterpolation(HeadingInterpolator interpolator) {
             last().headingInterpolator = interpolator;
