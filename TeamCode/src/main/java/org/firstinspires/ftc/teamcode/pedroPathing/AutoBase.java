@@ -4,8 +4,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.Poses;
-import org.firstinspires.ftc.teamcode.pedroPathing.Routine;
+import java.util.Objects;
 
 
 public abstract class AutoBase extends OpMode {
@@ -15,6 +14,7 @@ public abstract class AutoBase extends OpMode {
     private int index;
     private boolean arrived;
     private double arrivalTime;
+    private Object lastKey;
 
     protected abstract Pose startPose();
 
@@ -26,14 +26,37 @@ public abstract class AutoBase extends OpMode {
         return false;
     }
 
+    protected void initLoop() {}
+
+    protected Object selectionKey() {
+        return null;
+    }
+
     @Override
     public void init() {
+        telemetry.addLine("Initializing...");
         follower = Constants.createFollower(hardwareMap);
+        onInit();
+        rebuild();
+        telemetry.addLine("Done!");
+        telemetry.update();
+    }
+
+    @Override
+    public void init_loop() {
+        initLoop();
+        if (!Objects.equals(lastKey, selectionKey())) {
+            telemetry.clearAll();
+            telemetry.addLine("Building...");
+            rebuild();
+            telemetry.addLine("Done!");
+        }
+    }
+
+    private void rebuild() {
+        lastKey = selectionKey();
         Pose start = mirrored() ? startPose().mirror() : startPose();
         follower.setStartingPose(start);
-
-        onInit();
-
         routine = routine();
         routine.materialize(follower, mirrored());
     }
@@ -56,7 +79,6 @@ public abstract class AutoBase extends OpMode {
         }
 
         Routine.Leg leg = routine.leg(index);
-        leg.fire(follower.getCurrentTValue());
 
         if (!arrived && !follower.isBusy()) {
             arrived = true;
@@ -66,23 +88,28 @@ public abstract class AutoBase extends OpMode {
             }
         }
 
-        if (arrived && getRuntime() - arrivalTime >= leg.pause) {
+        if (arrived && (getRuntime() - arrivalTime >= leg.pause) && ready(leg)) {
             index++;
             beginLeg();
         }
 
         telemetry.addData("leg", index + "/" + routine.size());
+        telemetry.addData("held", arrived && !ready(leg));
         telemetry.addData("t", follower.getCurrentTValue());
         telemetry.addData("pose", follower.getPose());
         telemetry.update();
+    }
+    private boolean ready(Routine.Leg leg) {
+        if (leg.waitUntil == null) return true;
+        if (getRuntime() - arrivalTime >= leg.waitTimeout) return true;
+        return leg.waitUntil.getAsBoolean();
     }
 
     private void beginLeg() {
         arrived = false;
         if (index < routine.size()) {
             Routine.Leg leg = routine.leg(index);
-            leg.reset();
-            if (leg.onStart != null ) {
+            if (leg.onStart != null) {
                 leg.onStart.run();
             }
             follower.followPath(leg.path, leg.holdEnd);

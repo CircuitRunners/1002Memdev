@@ -7,11 +7,18 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.Poses;
-
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BooleanSupplier;
 
+/**
+ * Routine: an organizer class for making cleaner autonomous classes.
+ * No need for building pre-constructed paths.
+ * Everything is extended from AutoBase.java, which contains the
+ * actual loop and initialization.
+ */
 public class Routine {
     enum Heading { LINEAR, CONSTANT, TANGENT }
 
@@ -25,6 +32,15 @@ public class Routine {
         }
     }
 
+    /**
+     * One Leg indicates a single "phase" of the auto.
+     * It can have multiple Segments that the robot follows (not recommended
+     * when adding modifiers).
+     * It should resemble a single PathChain and its properties.
+     * Each Routine object has a starting point and
+     * a list of Legs.
+     */
+
     static class Leg {
         final List<Segment> segments = new ArrayList<>();
         Heading heading = Heading.LINEAR;
@@ -32,23 +48,12 @@ public class Routine {
         double pause = 0;
         Runnable onStart;
         Runnable onArrival;
-        final List<Double> triggerAt = new ArrayList<>();
-        final List<Runnable> triggers = new ArrayList<>();
-        boolean[] fired;
+        BooleanSupplier waitUntil;
+        double waitTimeout = Double.POSITIVE_INFINITY;
+        final Map<Double, Runnable> parametricTriggers = new LinkedHashMap<>();
+        final Map<Double, Runnable> temporalTriggers = new LinkedHashMap<>();
+        final Map<Pose, Runnable> poseTriggers = new LinkedHashMap<>();
         PathChain path;
-
-        void reset() {
-            fired = new boolean[triggers.size()];
-        }
-
-        void fire(double t) {
-            for (int i = 0; i < triggers.size(); i++) {
-                if (!fired[i] && t >= triggerAt.get(i)) {
-                    fired[i] = true;
-                    triggers.get(i).run();
-                }
-            }
-        }
     }
 
     private final Pose start;
@@ -67,6 +72,12 @@ public class Routine {
         return legs.get(i);
     }
 
+    /**
+     * The substitute for buildPaths();
+     * instead reads the paths from each leg to build.
+     * @param follower
+     * @param mirrored
+     */
     void materialize(Follower follower, boolean mirrored) {
         Pose cursor = mirrored ? start.mirror() : start;
         for (Leg leg : legs) {
@@ -94,10 +105,23 @@ public class Routine {
                 }
                 cursor = end;
             }
+
+            leg.parametricTriggers.forEach(pb::addParametricCallback);
+            leg.temporalTriggers.forEach(pb::addTemporalCallback);
+            leg.poseTriggers.forEach((p, r) -> {
+                pb.addPoseCallback(mirrored ? p.mirror() : p, r, 0.5);
+            });
+
             leg.path = pb.build();
         }
     }
 
+    /**
+     * This is what creates the actual Routines.
+     * It should function as a PathBuilder.
+     * @param start
+     * @return
+     */
     public static Builder from(Pose start) {
         return new Builder(start);
     }
@@ -168,9 +192,38 @@ public class Routine {
             return this;
         }
 
-        public Builder at(double t, Runnable r) {
-            last().triggerAt.add(t);
-            last().triggers.add(r);
+        public Builder waitUntil(BooleanSupplier condition) {
+            last().waitUntil = condition;
+            return this;
+        }
+
+        public Builder waitUntil(BooleanSupplier condition, double timeoutSeconds) {
+            last().waitUntil = condition;
+            last().waitTimeout = timeoutSeconds;
+            return this;
+        }
+
+        public Builder atTVal(double t, Runnable r) {
+            if (last().parametricTriggers.containsKey(t)) {
+                throw new IllegalStateException("Cannot run multiple Runnables for a singular t-value");
+            }
+            last().parametricTriggers.put(t, r);
+            return this;
+        }
+
+        public Builder atTime(double ms, Runnable r) {
+            if (last().temporalTriggers.containsKey(ms*1000)) {
+                throw new IllegalStateException("Cannot run multiple Runnables for a singular time index");
+            }
+            last().temporalTriggers.put(ms*1000, r);
+            return this;
+        }
+
+        public Builder atPose(Pose pose, Runnable r) {
+            if (last().poseTriggers.containsKey(pose)) {
+                throw new IllegalStateException("Cannot run multiple Runnables for a singular pose");
+            }
+            last().poseTriggers.put(pose, r);
             return this;
         }
 
