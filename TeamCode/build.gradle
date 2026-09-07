@@ -45,6 +45,8 @@ dependencies {
     implementation project(':FtcRobotController')
     implementation("com.bylazar.sloth:fullpanels:0.2.4+1.0.12")
     implementation("dev.frozenmilk.sinister:Sloth:0.2.4")
+    implementation ("org.solverslib:core:0.3.5")
+
 }
 
 
