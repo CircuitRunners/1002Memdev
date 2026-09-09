@@ -31,9 +31,9 @@ public class RoutineAuto extends AutoBase {
         if (gamepad1.dpadDownWasPressed()) routineIndex--;
         routineType = RoutineType.values()[Math.floorMod(routineIndex, RoutineType.values().length)];
 
-        telemetry.addLine("=======================");
-        telemetry.addLine("~~~ROUTINE SELECTION~~~");
-        telemetry.addLine("=======================");
+        telemetry.addLine("============================");
+        telemetry.addLine("~~~ ROUTINE SELECTION ~~~");
+        telemetry.addLine("============================");
         telemetry.addLine("");
         telemetry.addLine("Press Dpad Up/Down to change routines");
         telemetry.addLine("");
@@ -93,9 +93,12 @@ public class RoutineAuto extends AutoBase {
                 return Routine.from(startPose())
                         .to(Poses.startLine2)
                         .customInterpolation(HeadingInterpolator.piecewise(
-                                new HeadingInterpolator.PiecewiseNode(0.0, 0.3, HeadingInterpolator.facingPoint(Poses.startLine1)),
-                                new HeadingInterpolator.PiecewiseNode(0.3, 0.7, HeadingInterpolator.reversedLinear(Poses.startLine1.getHeading(), Math.toRadians(180))),
-                                new HeadingInterpolator.PiecewiseNode(0.7, 1.0, HeadingInterpolator.tangent)
+                                new HeadingInterpolator.PiecewiseNode(0.0, 0.3,
+                                        HeadingInterpolator.facingPoint(Poses.startLine1)),
+                                new HeadingInterpolator.PiecewiseNode(0.3, 0.7,
+                                        HeadingInterpolator.reversedLinear(Poses.startLine1.getHeading(), Math.toRadians(180))),
+                                new HeadingInterpolator.PiecewiseNode(0.7, 1.0,
+                                        HeadingInterpolator.tangent)
                         ))
                         .build();
 
