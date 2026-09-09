@@ -5,17 +5,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.controller.PIDFController;
-
 @Configurable
 @TeleOp
 public class armTuner extends OpMode {
     public DcMotorEx qwerty;
     public PIDFController armPIDcontroller;
-
     public static double armP = 0, armI = 0, armD = 0, armF = 0;
     public static double armSetPoint = 0;
     private int armPosition;
-
 
      @Override
     public void init() {
@@ -24,10 +21,7 @@ public class armTuner extends OpMode {
            qwerty.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
            qwerty.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
            qwerty.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
-
     }
-
     @Override
     public void loop(){
         armPosition = qwerty.getCurrentPosition();
