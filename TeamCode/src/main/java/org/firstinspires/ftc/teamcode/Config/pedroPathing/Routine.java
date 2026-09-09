@@ -54,6 +54,10 @@ public class Routine {
         Runnable onStart;
         Runnable onArrival;
         BooleanSupplier waitUntil;
+        BooleanSupplier blockUntil;
+        double blockingTVal;
+        double blockTimeout = Double.POSITIVE_INFINITY;
+
         double waitTimeout = Double.POSITIVE_INFINITY;
         final Map<Double, Runnable> parametricTriggers = new LinkedHashMap<>();
         final Map<Double, Runnable> temporalTriggers = new LinkedHashMap<>();
@@ -159,10 +163,23 @@ public class Routine {
             this.start = start;
         }
 
+        /**
+         * Creates another segment of the leg.
+         * Leg ends when to() is called.
+         * @param via
+         * @return
+         */
         public Builder through(Pose via) {
             pending.add(via);
             return this;
         }
+
+        /**
+         * Adds a linear path to an end Pose.
+         * Ends the leg and clears every segment.
+         * @param end
+         * @return
+         */
 
         public Builder to(Pose end) {
             Leg leg = new Leg();
@@ -207,6 +224,13 @@ public class Routine {
 
         public Builder pause(double seconds) {
             last().pause = seconds;
+            return this;
+        }
+
+        public Builder blockFromUntil(double tVal, BooleanSupplier condition, double timeout) {
+            last().blockUntil = condition;
+            last().blockingTVal = tVal;
+            last().blockTimeout = timeout;
             return this;
         }
 

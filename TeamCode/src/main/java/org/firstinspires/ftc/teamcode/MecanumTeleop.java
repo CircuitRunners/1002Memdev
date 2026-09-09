@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.Config.MecanumDrive;
 @TeleOp(name = "MecanumP")
 public class MecanumTeleop extends OpMode {
     private MecanumDrive drive;
@@ -28,6 +28,7 @@ public class MecanumTeleop extends OpMode {
         telemetry.addLine("Pready!");
         telemetry.update();
     }
+
     @Override
     public void loop() {
         if (gamepad1.dpad_up) {

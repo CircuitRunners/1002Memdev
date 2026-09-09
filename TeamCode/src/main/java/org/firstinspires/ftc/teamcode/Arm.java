@@ -25,6 +25,7 @@ public class Arm {
     // soft limits, in encoder ticks -- widen once you know the arm's real travel
     public static int MIN_TICKS = 0;
     public static int MAX_TICKS = 1200;
+    public static int TOLERANCE_TICKS = 50;
 
     // presets
     public static int DOWN = 0;
@@ -65,4 +66,5 @@ public class Arm {
     public double getTarget()   { return target; }
     public int getPosition()    { return motor.getCurrentPosition(); }
     public double getPower()    { return motor.getPower(); }
+    public boolean atTarget()   { return Math.abs(getTarget() - getPosition()) <= TOLERANCE_TICKS; }
 }

@@ -9,10 +9,12 @@ import java.util.Objects;
 
 public abstract class AutoBase extends OpMode {
     protected Follower follower;
-
     private Routine routine;
     private int index;
     private boolean arrived;
+    private boolean blockedAlready = false;
+    private double blockStart;
+    private boolean activeBlock = false;
     private double arrivalTime;
     private Object lastKey;
 
@@ -21,6 +23,7 @@ public abstract class AutoBase extends OpMode {
     protected abstract Routine routine();
 
     protected void onInit() {}
+    protected void onLoop() {}
 
     protected boolean mirrored() {
         return false;
@@ -70,6 +73,7 @@ public abstract class AutoBase extends OpMode {
     @Override
     public void loop() {
         follower.update();
+        onLoop();
 
         if (index >= routine.size()) {
             telemetry.addData("state", "done");
@@ -77,8 +81,22 @@ public abstract class AutoBase extends OpMode {
             requestOpModeStop();
             return;
         }
-
         Routine.Leg leg = routine.leg(index);
+
+        if (activeBlock) {
+            if (leg.blockUntil.getAsBoolean() || getRuntime() - blockStart >= leg.blockTimeout) {
+                follower.resumePathFollowing();
+                activeBlock = false;
+                blockedAlready = true;
+            } else {
+                telemetry.addData("blocked at t", leg.blockingTVal);
+                telemetry.update();
+                return;
+            }
+        } else if (leg.blockUntil != null && !blockedAlready && follower.getCurrentTValue() >= leg.blockingTVal && follower.isBusy()) {
+            beginBlock();
+            return;
+        }
 
         if (!arrived && !follower.isBusy()) {
             arrived = true;
@@ -88,13 +106,14 @@ public abstract class AutoBase extends OpMode {
             }
         }
 
-        if (arrived && (getRuntime() - arrivalTime >= leg.pause) && ready(leg)) {
+        boolean isReady = arrived && (getRuntime() - arrivalTime >= leg.pause) && ready(leg);
+        if (isReady) {
             index++;
             beginLeg();
         }
 
         telemetry.addData("leg", index + "/" + routine.size());
-        telemetry.addData("held", arrived && !ready(leg));
+        telemetry.addData("held", arrived && !isReady);
         telemetry.addData("t", follower.getCurrentTValue());
         telemetry.addData("pose", follower.getPose());
         telemetry.update();
@@ -105,8 +124,17 @@ public abstract class AutoBase extends OpMode {
         return leg.waitUntil.getAsBoolean();
     }
 
+    private void beginBlock() {
+        follower.pausePathFollowing();
+        activeBlock = true;
+        blockStart = getRuntime();
+        telemetry.update();
+    }
+
     private void beginLeg() {
         arrived = false;
+        blockedAlready = false;
+        activeBlock = false;
         if (index < routine.size()) {
             Routine.Leg leg = routine.leg(index);
             if (leg.onStart != null) {

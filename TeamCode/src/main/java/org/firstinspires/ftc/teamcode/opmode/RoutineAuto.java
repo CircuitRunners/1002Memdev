@@ -1,8 +1,12 @@
-package org.firstinspires.ftc.teamcode.Config.pedroPathing;
+package org.firstinspires.ftc.teamcode.opmode;
 
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+import org.firstinspires.ftc.teamcode.Config.pedroPathing.AutoBase;
+import org.firstinspires.ftc.teamcode.Config.pedroPathing.Poses;
+import org.firstinspires.ftc.teamcode.Config.pedroPathing.Routine;
 
 
 @Autonomous(name="Routine Auto")
