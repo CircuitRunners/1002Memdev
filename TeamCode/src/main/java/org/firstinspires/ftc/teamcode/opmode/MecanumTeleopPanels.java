@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.Config.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Config.pedroPathing.Constants;
 
 
@@ -89,7 +88,7 @@ public class MecanumTeleopPanels extends OpMode {
         double strafe  =  g1.left_stick_x * speedMultiply;
         double rotate  =  g1.right_stick_x * speedMultiply;
 
-        /** Send inputs to drive class using method created in Mecanum Drive Class */
+        /** Send inputs to drive class using method created in Mecanum Drive Class **/
         drive.drive(forward, strafe, rotate);
 
         panelsTelemetry.addData(
