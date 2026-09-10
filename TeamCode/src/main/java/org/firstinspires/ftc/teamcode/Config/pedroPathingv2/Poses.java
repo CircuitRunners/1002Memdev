@@ -1,7 +1,9 @@
-package org.firstinspires.ftc.teamcode.Config.pedroPathing;
+package org.firstinspires.ftc.teamcode.Config.pedroPathingv2;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.pedropathing.geometry.Pose;
+//import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Pose;
+
 @Configurable
 public class Poses {
     public static final Pose startLine1 = new Pose(72, 72, Math.toRadians(90));

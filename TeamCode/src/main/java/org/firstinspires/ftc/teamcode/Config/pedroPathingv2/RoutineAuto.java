@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.Config.pedroPathing;
+package org.firstinspires.ftc.teamcode.Config.pedroPathingv2;
 
-import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.HeadingInterpolator;
+import com.pedropathing.math.Pose;
+import com.pedropathing.paths.interpolator.Interpolator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
 
 @Autonomous(name="Routine Auto")
 public class RoutineAuto extends AutoBase {
@@ -23,7 +22,7 @@ public class RoutineAuto extends AutoBase {
     }
 
     @Override
-    protected boolean mirrored() {return false;}
+    protected boolean mirrored() { return false; }
 
     @Override
     protected void initLoop() {
@@ -53,50 +52,48 @@ public class RoutineAuto extends AutoBase {
             case QUARTER_CIRCLE:
                 return Routine.from(startPose())
                         .to(Poses.endLine1)
-                            .constantHeading()
-                            .pause(0.5)
+                        .constantHeading()
+                        .pause(0.5)
                         .curveTo(Poses.curve1, Poses.curve1ControlPoint)
-                            .tangentHeading()
-                            .pause(0.5)
+                        .tangentHeading()
+                        .pause(0.5)
                         .to(Poses.startLine1)
-                            .interpolatedHeading()
-                            .pause(0.5)
+                        .interpolatedHeading()
+                        .pause(0.5)
                         .build();
 
             case TWO_LINES:
                 return Routine.from(startPose())
                         .to(Poses.endLine1)
-                            .constantHeading()
-                            .pause(0.5)
+                        .constantHeading()
+                        .pause(0.5)
                         .to(Poses.startLine2)
-                            .interpolatedHeading()
-                            .pause(0.5)
+                        .interpolatedHeading()
+                        .pause(0.5)
                         .to(Poses.endLine2)
-                            .constantHeading()
-                            .pause(0.5)
+                        .constantHeading()
+                        .pause(0.5)
                         .build();
 
             case ZIG_ZAG:
                 return Routine.from(startPose())
                         .to(Poses.endLine1)
-                            .constantHeading()
-                            .pause(0.5)
+                        .constantHeading()
+                        .pause(0.5)
                         .to(Poses.endLine2)
-                            .tangentHeading()
-                            .pause(0.5)
+                        .tangentHeading()
+                        .pause(0.5)
                         .to(Poses.startLine2)
-                            .constantHeading()
-                            .pause(0.5)
+                        .constantHeading()
+                        .pause(0.5)
                         .build();
 
             case PIECEWISE_TEST:
                 return Routine.from(startPose())
                         .to(Poses.startLine2)
-                        .customInterpolation(HeadingInterpolator.piecewise(
-                                new HeadingInterpolator.PiecewiseNode(0.0, 0.3, HeadingInterpolator.facingPoint(Poses.startLine1)),
-                                new HeadingInterpolator.PiecewiseNode(0.3, 0.7, HeadingInterpolator.reversedLinear(Poses.startLine1.getHeading(), Math.toRadians(180))),
-                                new HeadingInterpolator.PiecewiseNode(0.7, 1.0, HeadingInterpolator.tangent)
-                        ))
+                        .customInterpolation(Interpolator.piecewise()
+                                .until(0.5, Interpolator.tangent)
+                                .until(1.0, Interpolator.linear(startPose(), Poses.startLine2)))
                         .build();
 
             default:

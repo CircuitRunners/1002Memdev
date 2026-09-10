@@ -30,6 +30,7 @@ public class MecanumTeleop extends OpMode {
                 .getFirstManager()
                 .asCombinedFTCGamepad(gamepad1);
 
+
         if (g1.dpadDownWasPressed()) {
             speedMultiply = 0.25;
         } else if (g1.dpadLeftWasPressed()) {
@@ -39,7 +40,7 @@ public class MecanumTeleop extends OpMode {
         } else if (g1.dpadUpWasPressed()) {
             speedMultiply = 1.0;
         }
-    double forward = -1*g1.left_stick_y*speedMultiply;
+    double forward = -1*(g1.left_stick_y*speedMultiply);
     double strafe = g1.left_stick_x*speedMultiply;
     double rotate = g1.right_stick_x*speedMultiply;
 
