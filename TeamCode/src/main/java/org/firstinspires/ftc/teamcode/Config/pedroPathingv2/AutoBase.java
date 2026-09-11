@@ -32,6 +32,7 @@ public abstract class AutoBase extends OpMode {
     protected void onInit() {}
     protected boolean mirrored() { return false; }
     protected void initLoop() {}
+    protected void onLoop() {}
     protected Object selectionKey() { return null; }
 
     @Override
@@ -58,10 +59,12 @@ public abstract class AutoBase extends OpMode {
 
     private void rebuild() {
         lastKey = selectionKey();
+
         Pose start = mirrored() ? mirror(startPose()) : startPose();
         follower.setPose(start);
         routine = routine();
         routine.materializePaths(mirrored());
+
         firedTCallbacks.clear();
         firedTimeCallbacks.clear();
         firedPoseCallbacks.clear();
@@ -76,6 +79,7 @@ public abstract class AutoBase extends OpMode {
     @Override
     public void loop() {
         follower.update();
+        onLoop();
 
         if (index >= routine.size()) {
             telemetry.addData("state", "done");

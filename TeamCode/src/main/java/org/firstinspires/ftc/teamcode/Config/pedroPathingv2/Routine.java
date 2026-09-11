@@ -49,7 +49,6 @@ public class Routine {
         final Map<Double, Runnable> parametricTriggers = new LinkedHashMap<>();
         final Map<Double, Runnable> temporalTriggers = new LinkedHashMap<>();
         final Map<Pose, Runnable> poseTriggers = new LinkedHashMap<>();
-
         Path path;
     }
 

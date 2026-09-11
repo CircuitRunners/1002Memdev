@@ -50,6 +50,7 @@ public class Arm {
     }
 
     public double getTarget()   { return target; }
+    public boolean atTarget()   { return Math.abs(target - getPosition()) <= 50; }
     public int getPosition()    { return motor.getCurrentPosition(); }
     public double getPower()    { return motor.getPower(); }
 }
