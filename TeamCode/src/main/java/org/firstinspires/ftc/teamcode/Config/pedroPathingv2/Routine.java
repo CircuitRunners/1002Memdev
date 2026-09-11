@@ -6,6 +6,7 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.interpolator.Interpolator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,13 +24,10 @@ public class Routine {
 
     static class Segment {
         final Pose end;
-        final Pose control;
-        final boolean curved;
-
-        Segment(Pose end, Pose control, boolean curved) {
+        final ArrayList<Pose> controlPoses = new ArrayList<>();
+        Segment(Pose end, Pose... control) {
             this.end = end;
-            this.control = control;
-            this.curved = curved;
+            Collections.addAll(controlPoses, control);
         }
     }
 
@@ -76,10 +74,19 @@ public class Routine {
 
             for (Segment s : leg.segments) {
                 Pose end = mirrored ? AutoBase.mirror(s.end) : s.end;
-                Pose ctrl = s.control == null ? null : (mirrored ? AutoBase.mirror(s.control) : s.control);
 
-                Path path = s.curved
-                        ? Paths.curve(cursor, ctrl, end)
+                boolean controlled = !s.controlPoses.isEmpty();
+                ArrayList<Pose> ctrlPoses = controlled
+                        ? (mirrored ? AutoBase.mirror(s.controlPoses) : new ArrayList<>(s.controlPoses))
+                        : null;
+
+                if (controlled) {
+                    ctrlPoses.add(0, cursor);
+                    ctrlPoses.add(end);
+                }
+
+                Path path = controlled
+                        ? Paths.curve(ctrlPoses.toArray(new Pose[0]))
                         : Paths.line(cursor, end);
 
                 switch (leg.heading) {
@@ -140,21 +147,21 @@ public class Routine {
         public Builder to(Pose end) {
             Leg leg = new Leg();
             for (Pose p : pending) {
-                leg.segments.add(new Segment(p, null, false));
+                leg.segments.add(new Segment(p));
             }
-            leg.segments.add(new Segment(end, null, false));
+            leg.segments.add(new Segment(end));
             pending.clear();
             legs.add(leg);
             return this;
         }
 
-        public Builder curveTo(Pose end, Pose control) {
+        public Builder curveTo(Pose end, Pose... controlPoses) {
             Leg leg = new Leg();
             for (Pose p : pending) {
-                leg.segments.add(new Segment(p, null, false));
+                leg.segments.add(new Segment(p));
             }
             pending.clear();
-            leg.segments.add(new Segment(end, control, true));
+            leg.segments.add(new Segment(end, controlPoses));
             legs.add(leg);
             return this;
         }

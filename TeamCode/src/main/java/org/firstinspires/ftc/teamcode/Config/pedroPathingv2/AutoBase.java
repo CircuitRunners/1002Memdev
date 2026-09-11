@@ -7,7 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.Config.pedroPathingv2.Constants;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -170,5 +172,11 @@ public abstract class AutoBase extends OpMode {
 
     static Pose mirror(Pose pose) {
         return MIRROR.of(pose.x(), pose.y(), pose.heading());
+    }
+
+    static ArrayList<Pose> mirror(ArrayList<Pose> poses) {
+        ArrayList<Pose> mirroredPoses = new ArrayList<>();
+        poses.forEach((p) -> mirroredPoses.add(mirror(p)));
+        return mirroredPoses;
     }
 }
