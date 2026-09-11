@@ -7,7 +7,7 @@ import com.bylazar.gamepad.PanelsGamepad;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -43,9 +43,9 @@ public class MecanumTeleopPanels extends OpMode {
         drive.init(hardwareMap);
 
         panelsField.setOffsets(PanelsField.INSTANCE.getPresets().getPEDRO_PATHING());
-        follower = Constants.createFollower(hardwareMap);
+        follower = Constants.create(hardwareMap);
 
-        follower.setStartingPose(new Pose(72, 72, Math.toRadians(90)));
+        follower.setPose(new Pose(72, 72, Math.toRadians(90)));
 
         follower.update();
 
@@ -66,7 +66,7 @@ public class MecanumTeleopPanels extends OpMode {
 
         follower.update();
 
-        drawRobot(follower.getPose());
+        drawRobot(follower.pose());
 
         panelsField.update();
 
@@ -128,20 +128,20 @@ public class MecanumTeleopPanels extends OpMode {
         panelsField.setStyle(robotStyle);
 
         panelsField.moveCursor(
-                pose.getX(),
-                pose.getY()
+                pose.x(),
+                pose.y()
         );
 
         panelsField.circle(9);
 
-        double heading = pose.getHeading();
+        double heading = pose.heading();
 
-        double x2 = pose.getX() + Math.cos(heading) * 9;
-        double y2 = pose.getY() + Math.sin(heading) * 9;
+        double x2 = pose.x() + Math.cos(heading) * 9;
+        double y2 = pose.y() + Math.sin(heading) * 9;
 
         panelsField.moveCursor(
-                pose.getX(),
-                pose.getY()
+                pose.x(),
+                pose.y()
         );
 
         panelsField.line(x2, y2);
