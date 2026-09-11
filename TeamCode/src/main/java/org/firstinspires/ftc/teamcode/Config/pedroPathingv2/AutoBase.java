@@ -5,7 +5,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.Config.pedrov3.Constants;
+import org.firstinspires.ftc.teamcode.Config.pedroPathingv2.Constants;
 
 import java.util.HashSet;
 import java.util.Objects;
